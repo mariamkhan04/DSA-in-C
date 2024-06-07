@@ -1,0 +1,91 @@
+int main(){
+    int command,index;
+    int steps;
+    int number;
+    bool flag= true;
+    while(flag == true){
+        printf("\tCommands\t\n");
+        printf("1. Add at end of list\n");
+        printf("2. Delete tail of list\n");
+        printf("3. Add number at specific index\n");
+        printf("4. Delete the specific index of list\n");
+        printf("5. Move the cursor forward by the number of steps mentioned.\n");
+        printf("6. Move the cursor backward by the number of steps mentioned.\n");
+        printf("7. Add the number just after the cursor position.\n");
+        printf("8. Delete the index where the cursor is presented\n");
+        printf("9. Print the data of the cursors node.\n");
+        printf("10. Update the data at the specific index by the number.\n");
+        printf("11. Update the data at which the cursor is pointing to.\n");
+        printf("12. Shift the current data of cursor with the data of the index specified.\n");
+        // printf("13. Undo the last performed operation\n");
+        printf("13. Print list\n");
+        printf("14. Exit\n");
+        printf("Enter your command: ");
+        scanf("%d",&command);
+
+        switch(command){
+            case 1:
+                addAtEnd();
+            break;
+            case 2:
+                deleteTail();
+            break;
+            case 3:
+                printf("Enter index: ");
+                scanf("%d",&index);
+                addAtSpecificIndex(index);
+            break;
+            case 4:
+                printf("Enter index: ");
+                scanf("%d",&index);
+                deleteAtSpecificIndex(index);
+            break;
+            case 5:
+                printf("Enter steps: ");
+                scanf("%d",&steps);
+                moveForwardsteps(steps);
+            break;
+            case 6:
+                printf("Enter steps: ");
+                scanf("%d",&steps);
+                moveBackwardsteps(steps);
+            break;
+            case 7:
+                addImmediateNumber();
+            break;
+            case 8:
+                deleteImmediateNumber();
+            break;
+            case 9:
+                printCursorNode();
+            break;
+            case 10:
+                printf("Enter index: ");
+                scanf("%d",&index);
+                printf("Enter Number you want to update previous number by: ");
+                scanf("%d",&number);
+                updateIndexNumber(index,number);
+            break;
+            case 11:
+                printf("Enter number: ");
+                scanf("%d",&number);
+                updateImmediateNumber(number);
+            break;
+            case 12:
+                printf("Enter index: ");
+                scanf("%d",&index);
+                shiftIndex(index);
+            break;
+            case 13:
+                printLinkedList();
+            break;
+            case 14:
+                printf("Program Finished");
+                flag = false;
+            break;
+            default:
+                printf("Enter valid choice!");
+        }
+    }
+    return 0;
+}

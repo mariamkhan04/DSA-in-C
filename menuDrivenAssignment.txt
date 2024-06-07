@@ -1,0 +1,331 @@
+/* This program creates a linked list to store courses and students.
+   The user can insert courses, insert students into a course,
+   print all courses, print all students, print all courses and students,
+   search for a course, search for a student, delete a course, delete all courses,
+   delete a student from a course, and delete a student from all courses. */
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+
+struct Course{
+    int courseNo;
+    struct Course *next;     //holds the address of next node
+    struct Student *sstart; //holds the address of start of student node
+} *cstart = NULL;           //course linked list initially is null
+
+struct Student{
+    int studentId;
+    struct Student *next;  //holds the address of next node
+} *sstart = NULL;          //Student linked list initially is null
+
+//function to insert course 
+void insertCourse(){
+    //Dynamically Allocate memory for a new course node
+    struct Course *temp= (struct Course *)malloc(sizeof(struct Course));
+
+    printf("Enter course # : "); //Get the course number from the user.
+    scanf("%d",&temp->courseNo); 
+    temp->next = NULL;           //Setting the next pointer of the new course node to NULL
+    temp->sstart = NULL;         //Set the `sstart` pointer of the new course node to NULL
+
+     if(cstart == NULL){        //If the linked list is empty, setting cstart to the new course node(temp)
+        cstart = temp;
+     }
+     else{                      //Otherwise, traversing the linked list and adding the new course node to the end of the list
+        struct Course *curr = cstart;
+        while(curr->next != NULL){
+            curr =curr->next;
+        }
+        curr->next=temp;
+     }
+}
+//Function to insert a student into a course
+void insertStudent(int cNo) {
+    struct Course *ccurr = cstart;
+    while (ccurr != NULL) {
+        // Finding the course node with the specified course number
+        if (ccurr->courseNo == cNo) {
+            //Dynamically Allocate memory for a new Student node
+            struct Student *temp = (struct Student *)malloc(sizeof(struct Student));
+            printf("Enter Student ID: ");     //Enter Id 
+            scanf("%d", &temp->studentId);
+            temp->next = NULL;                 //Seting the next pointer of the new student node to NULL
+
+            // If the linked list of students is empty, set the `sstart` pointer of the current course node to the new student node.
+            if (ccurr->sstart == NULL) {
+                ccurr->sstart = temp;
+            } else {
+            // Otherwise, traverse the linked list of students and insert the new student node at the end of the list.
+                struct Student *scurr = ccurr->sstart;
+                while (scurr->next != NULL) {
+                    scurr = scurr->next;
+                }
+                scurr->next = temp;
+            }
+            return;
+        }
+        ccurr = ccurr->next;
+    }
+    printf("Course not found\n");
+}
+
+//Function to print the students in a course
+void printStudents(int cNo) {
+    struct Course *ccurr = cstart;      //ccurr is pointing to start Node of course list
+    while (ccurr != NULL) {             //loop untill ccurr == NULL
+        if (ccurr->courseNo == cNo) {   //if the courseNo in current course Node equal to courseNo of Students  
+        printf("Students Ids in course %d are: \n", cNo); //then prints Ids of students available in that course
+        struct Student *scurr = ccurr->sstart; //student current Node is pointing to current course Node's sstart(start Node of Student Linked List)
+        while (scurr != NULL) {         //loop untill student current Node equal to NULL
+            printf("%d\n", scurr->studentId); 
+            scurr = scurr->next;        //update scurr value to its next
+        }
+        printf("\n");
+        return;
+        }
+        ccurr = ccurr->next;            //update ccurr value to its next
+    }
+    printf("Course not found\n");       //if ccurr == NULL then course you asked is not available
+}
+
+void printCourses(){
+    struct Course *ccurr = cstart;
+    while(ccurr != NULL){
+        printf("Courses are: %d\n",ccurr->courseNo);
+        // printStduents(ccurr->sstart);
+        ccurr = ccurr->next;
+    }
+}
+
+void printAllCoursesAndStudents() {
+  struct Course *ccurr = cstart;
+  while (ccurr != NULL) {
+    printf("Course %d: ", ccurr->courseNo);
+    struct Student *scurr = ccurr->sstart;
+    while (scurr != NULL) {
+      printf("%d ", scurr->studentId);
+      scurr = scurr->next;
+    }
+    printf("\n");
+    ccurr = ccurr->next;
+  }
+}
+
+void searchCourse(int cNo){
+    struct Course *ccurr = cstart;
+    while (ccurr != NULL)
+    {
+        if(ccurr->courseNo == cNo){
+            printf("Course found: %d\n",ccurr->courseNo);
+            printStudents(cNo);
+            break;
+        }
+        ccurr = ccurr->next;
+    }
+    if(ccurr == NULL){
+        printf("course not found\n");
+    }
+}
+
+void searchStudents(int sId){
+    struct Course *ccurr = cstart;
+    bool found = false;
+    while (ccurr != NULL)
+    {
+        struct  Student *scurr= ccurr->sstart;
+        while (scurr != NULL)
+        {
+            if(scurr->studentId == sId){
+                if(!found){
+                    printf("Student Id %d found in courses: ",scurr->studentId);
+                    found = true;
+                }
+                printf("%d \n",ccurr->courseNo);
+            }
+            scurr = scurr->next;
+        }
+        ccurr = ccurr->next;
+    }
+    if(!found){
+        printf("Student Not found\n");
+    }
+}
+
+void deleteCourse(int cNo) {
+  struct Course *ccurr = cstart;
+    if(cNo == cstart->courseNo){
+        cstart = cstart->next;
+        free(ccurr);
+    }
+    else
+    {
+        struct Course *prev = cstart;
+        ccurr = cstart->next;
+        while(ccurr != NULL){
+            if(ccurr->courseNo == cNo){
+                prev->next = ccurr->next;
+                free(ccurr);
+                break; 
+            }
+            else{
+                prev = prev->next;
+                ccurr = ccurr->next;
+            }
+        }
+        if(ccurr == NULL){
+            printf("Course not found");
+        }
+    }
+}
+
+void deleteAllCourses() {
+  struct Course *ccurr = cstart;
+  while (ccurr != NULL) {
+    struct Course *temp=ccurr;
+        ccurr = ccurr->next;
+        free(temp);
+    }
+    cstart = NULL;
+    printf("All Courses deleted\n");
+}
+
+void deleteStudentFromCourse(int sId,int cNo){
+    struct Course *ccurr = cstart;
+    int count = 0;
+    while(ccurr != NULL){
+        if(ccurr->courseNo == cNo){
+            struct Student *scurr = ccurr->sstart;
+            if(sId == ccurr->sstart->studentId){
+                ccurr->sstart = ccurr->sstart->next;
+                free(scurr);
+            }
+             else
+            {
+                struct Student *prev = ccurr->sstart;
+                scurr = ccurr->sstart->next;
+                while(scurr != NULL){
+                    if(scurr->studentId == sId){
+                        prev->next = scurr->next;
+                        free(scurr);
+                    break; 
+                    }
+                    else
+                    {
+                    prev = prev->next;
+                    scurr = scurr->next;
+                    }
+                }
+                if(scurr == NULL){
+                    printf("Student not found in course");  
+                }
+            }
+            count=count+1;
+        }
+        ccurr = ccurr->next;
+    }
+    if(count == 0){
+        printf("Course not found\n");
+    }
+}
+
+void deleteStudentFromAllCourses(int sId) {
+  struct Course *ccurr = cstart;
+  while (ccurr != NULL) {
+    deleteStudentFromCourse(sId, ccurr->courseNo);
+    ccurr = ccurr->next;
+  }
+}
+
+
+int main(){
+    int choice,LengthList;
+    int cNo,sId;
+    bool flag= true;
+    while(flag == true){
+        printf("\tOptions\t\n");
+        printf("1. Insert Course\n");
+        printf("2. Insert Students\n");
+        printf("3. Print Courses\n");
+        printf("4. Print Students\n");
+        printf("5. Print All\n");
+        printf("6. Search Course\n");
+        printf("7. Search Student\n");
+        printf("8. Delete Course\n");
+        printf("9. Delete All Courses\n");
+        printf("10. Delete Student from a Course\n");
+        printf("11. Delete Student From All Courses\n");
+        printf("12. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d",&choice);
+
+        switch(choice){
+            case 1:
+                printf("Enter Course list size: "); 
+                scanf("%d",&LengthList);
+                for (int i = 0; i < LengthList; i++)
+                {
+                    insertCourse();    
+                }
+            break;
+            case 2:
+                printf("Enter Course #: ");
+                scanf("%d",&cNo);
+                printf("Enter Student list size: "); 
+                scanf("%d",&LengthList);
+                for (int i = 0; i < LengthList; i++)
+                {
+                    insertStudent(cNo);    
+                }
+            break;
+            case 3:
+                printCourses();
+            break;
+            case 4:
+                printf("Enter Course #: ");
+                scanf("%d",&cNo);
+                printStudents(cNo);
+            break;
+            case 5:
+                printAllCoursesAndStudents();
+            break;
+            case 6:
+                printf("Enter Course #: ");
+                scanf("%d",&cNo);
+                searchCourse(cNo);
+            break;
+             case 7:
+                printf("Enter Student Id : ");
+                scanf("%d",&sId);
+                searchStudents(sId);
+            break;
+            case 8:
+                printf("Enter Course No : ");
+                scanf("%d",&cNo);
+                deleteCourse(cNo);
+            break;
+            case 9:
+                deleteAllCourses();
+            break;
+            case 10:
+                printf("Enter Course No : ");
+                scanf("%d",&cNo);
+                printf("Enter Student Id you want to delete: ");
+                scanf("%d",&sId);
+                deleteStudentFromCourse(sId,cNo);
+            break;
+            case 11:
+                printf("Enter Id Of Student that you want to delete from all courses: ");
+                scanf("%d",&sId);
+                deleteStudentFromAllCourses(sId);
+            break;
+            case 12:
+                printf("Program Finished\n");
+                flag = false;
+            break;
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+    return 0;
+}
